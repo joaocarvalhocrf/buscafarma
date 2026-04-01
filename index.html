@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuscaFarma</title>
+  <style>
+    body {font-family: Arial; margin:0; background:#f5f5f5;}
+    header {background:#2ecc71; padding:15px; color:white; font-size:24px; font-weight:bold;}
+    .container {padding:20px;}
+    .search-box {background:white; padding:15px; border-radius:10px; display:flex;}
+    .search-box input {flex:1; padding:10px; border:none; font-size:16px;}
+    .search-box button {background:#2ecc71; color:white; border:none; padding:10px 15px; border-radius:8px;}
+    .cards {margin-top:20px;}
+    .card {background:white; padding:15px; margin-bottom:10px; border-radius:10px;}
+    .price {color:#2ecc71; font-weight:bold;}
+    .btn {background:#2ecc71; color:white; padding:8px 12px; border:none; border-radius:8px; margin-top:10px; display:inline-block;}
+    .msg {margin-top:10px; color:#888;}
+  </style>
+</head>
+<body>
+
+<header>BuscaFarma</header>
+
+<div class="container">
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Qual produto você procura?">
+    <button id="btnBuscar">Buscar</button>
+  </div>
+
+  <div class="cards" id="resultados"></div>
+  <div class="msg" id="mensagem"></div>
+</div>
+
+<script>
+let produtos = [];
+
+async function carregarProdutos(){
+  try {
+    const res = await fetch('produtos.json', {cache: 'no-store'});
+    if(!res.ok) throw new Error('Falha ao carregar dados');
+    produtos = await res.json();
+    document.getElementById('mensagem').textContent = 'Dados carregados.';
+  } catch (e) {
+    document.getElementById('mensagem').textContent = 'Erro ao carregar dados. Usando dados de exemplo.';
+    produtos = [
+      {nome:"Dipirona 500mg", preco:5.99, farmacia:"Farmácia Central", whatsapp:"https://wa.me/5599999999999"},
+      {nome:"Dipirona 500mg", preco:7.50, farmacia:"Drogaria Saúde", whatsapp:"https://wa.me/5588888888888"},
+      {nome:"Dorflex", preco:12.99, farmacia:"Farmácia Popular", whatsapp:"https://wa.me/5577777777777"}
+    ];
+  }
+}
+
+function render(lista){
+  const resultados = document.getElementById("resultados");
+  resultados.innerHTML = "";
+
+  if(!lista.length){
+    const vazio = document.createElement("div");
+    vazio.className = "card";
+    vazio.textContent = "Nenhum resultado encontrado.";
+    resultados.appendChild(vazio);
+    return;
+  }
+
+  lista.sort((a,b)=> a.preco - b.preco);
+
+  const fragment = document.createDocumentFragment();
+
+  lista.forEach((p, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = p.nome;
+
+    const price = document.createElement("p");
+    price.className = "price";
+    price.textContent = `R$ ${Number(p.preco).toFixed(2)}`;
+
+    const farmacia = document.createElement("p");
+    farmacia.textContent = p.farmacia;
+
+    card.appendChild(title);
+    card.appendChild(price);
+    card.appendChild(farmacia);
+
+    if(index === 0){
+      const destaque = document.createElement("strong");
+      destaque.textContent = "🔥 Mais barato";
+      card.appendChild(destaque);
+    }
+
+    const link = document.createElement("a");
+    link.className = "btn";
+    link.href = p.whatsapp;
+    link.target = "_blank";
+    link.textContent = "Chamar no WhatsApp";
+
+    card.appendChild(document.createElement("br"));
+    card.appendChild(link);
+
+    fragment.appendChild(card);
+  });
+
+  resultados.appendChild(fragment);
+}
+
+function buscar(){
+  const termo = document.getElementById("search").value.toLowerCase().trim();
+  const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
+  render(filtrados);
+}
+
+document.getElementById("btnBuscar").addEventListener("click", buscar);
+document.getElementById("search").addEventListener("keydown", (e)=>{
+  if(e.key === 'Enter') buscar();
+});
+
+carregarProdutos();
+</script>
+
+</body>
+</html>
