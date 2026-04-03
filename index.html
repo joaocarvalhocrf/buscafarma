@@ -173,7 +173,7 @@ function buscar(){
   resultados.innerHTML = "";
 
   const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
-
+  filtrados.sort((a, b) => a.preco - b.preco);
   filtrados.forEach(p => {
     const card = document.createElement("div");
     card.className = "card";
