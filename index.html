@@ -191,8 +191,14 @@ function buscar(){
     resultados.appendChild(card);
   });
 }
+  const input = document.getElementById("search");
+
+input.addEventListener("input", () => {
+  buscar();
+});
   if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
+  }
 </script>
 
 </body>
