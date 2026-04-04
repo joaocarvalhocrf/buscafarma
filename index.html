@@ -1,229 +1,213 @@
-<!DOCTYPE html>  <html lang="pt-BR">  
-<head> <link rel="manifest" href="manifest.json">  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>BuscaFarma</title>  <style>  
-body {  
-  margin: 0;  
-  font-family: Arial;  
-  background: #f5f5f5;  
-}  
-  
-header {  
-  background: #2ecc71;  
-  padding: 15px;  
-  color: white;  
-  font-size: 22px;  
-  font-weight: bold;  
-}  
-  
-.banner {  
-  width: 100%;  
-  height: 160px;  
-  background: linear-gradient(90deg, #2ecc71, #27ae60);  
-  display: flex;  
-  align-items: center;  
-  justify-content: center;  
-  color: white;  
-  font-size: 20px;  
-}  
-  
-.container {  
-  padding: 15px;  
-}  
-  
-.search-box {  
-  background: white;  
-  border-radius: 12px;  
-  display: flex;  
-  padding: 10px;  
-  margin-top: -30px;  
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);  
-}  
-  
-.search-box input {  
-  flex: 1;  
-  border: none;  
-  padding: 10px;  
-}  
-  
-.search-box button {  
-  background: #2ecc71;  
-  color: white;  
-  border: none;  
-  border-radius: 10px;  
-  padding: 10px;  
-}  
-  
-.categorias {  
-  display: flex;  
-  gap: 10px;  
-  overflow-x: auto;  
-  margin-top: 15px;  
-}  
-  
-.categoria {  
-  background: white;  
-  padding: 10px;  
-  border-radius: 10px;  
-  min-width: 100px;  
-  text-align: center;  
-  font-size: 14px;  
-}  
-  
-.cards {  
-  margin-top: 15px;  
-}  
-  
-.card {  
-  background: white;  
-  border-radius: 12px;  
-  padding: 10px;  
-  margin-bottom: 12px;  
-  display: flex;  
-  gap: 10px;  
-}  
-  
-.card img {  
-  width: 80px;  
-  height: 80px;  
-  border-radius: 10px;  
-  object-fit: cover;  
-}  
-  
-.info {  
-  flex: 1;  
-}  
-  
-.price {  
-  color: #27ae60;  
-  font-weight: bold;  
-}  
-  
-.btn {  
-  background: #2ecc71;  
-  color: white;  
-  padding: 6px;  
-  border-radius: 8px;  
-  display: inline-block;  
-  margin-top: 5px;  
-  text-decoration: none;  
-  font-size: 14px;  
-}  
-</style>  </head>  <body>  <header>BuscaFarma</header>  <div class="banner">  
-  Encontre o melhor preço 💊  
-</div>  <div class="container">    <div class="search-box">  
-    <input type="text" id="search" placeholder="Buscar remédio...">  
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuscaFarma</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f5f5f5;
+}
+
+header {
+  background: #2ecc71;
+  padding: 15px;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.banner {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.container {
+  padding: 15px;
+}
+
+.search-box {
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  padding: 10px;
+  margin-top: -30px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+}
+
+.search-box button {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.categorias {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+.categoria {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  min-width: 100px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.cards {
+  margin-top: 15px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.info {
+  flex: 1;
+}
+
+.price {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.badge {
+  color: green;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.btn {
+  background: #2ecc71;
+  color: white;
+  padding: 6px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 5px;
+  text-decoration: none;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<header>BuscaFarma</header>
+
+<div class="banner">
+  Encontre o melhor preço 💊
+</div>
+
+<div class="container">
+
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Buscar remédio...">
     <button id="btnBuscar">Buscar</button>
-  </div>    <div class="categorias">  
-    <div class="categoria">Dor</div>  
-    <div class="categoria">Febre</div>  
-    <div class="categoria">Vitaminas</div>  
-    <div class="categoria">Gripes</div>  
-  </div>    <div class="cards" id="resultados"></div>  </div>  <script>  
+  </div>
+
+  <div class="categorias">
+    <div class="categoria">Dor</div>
+    <div class="categoria">Febre</div>
+    <div class="categoria">Vitaminas</div>
+    <div class="categoria">Gripes</div>
+  </div>
+
+  <div class="cards" id="resultados"></div>
+
+</div>
+
+<script>
 const produtos = [
-  // DIPIRONA
-  {
-    nome:"Dipirona 500mg",
-    preco:5.99,
-    farmacia:"Farmácia Central",
-    img:"https://images.unsplash.com/photo-1580281657527-47c8c3d5b2b4",
-    whatsapp:"https://wa.me/5599999999999"
-  },
-  {
-    nome:"Dipirona 500mg",
-    preco:6.49,
-    farmacia:"Drogaria Saúde",
-    img:"https://images.unsplash.com/photo-1580281657527-47c8c3d5b2b4",
-    whatsapp:"https://wa.me/5588888888888"
-  },
-  {
-    nome:"Dipirona 500mg",
-    preco:4.99,
-    farmacia:"Farmácia Popular",
-    img:"https://images.unsplash.com/photo-1580281657527-47c8c3d5b2b4",
-    whatsapp:"https://wa.me/5577777777777"
-  },
+  {nome:"Dipirona 500mg", preco:5.99, farmacia:"Farmácia Central", img:"https://images.unsplash.com/photo-1580281657527-47c8c3d5b2b4", whatsapp:"https://wa.me/5599999999999"},
+  {nome:"Dipirona 500mg", preco:6.49, farmacia:"Drogaria Saúde", img:"https://images.unsplash.com/photo-1580281657527-47c8c3d5b2b4", whatsapp:"https://wa.me/5588888888888"},
+  {nome:"Dipirona 500mg", preco:4.99, farmacia:"Farmácia Popular", img:"https://images.unsplash.com/photo-1580281657527-47c8c3d5b2b4", whatsapp:"https://wa.me/5577777777777"},
 
-  // DORFLEX
-  {
-    nome:"Dorflex",
-    preco:12.99,
-    farmacia:"Farmácia Central",
-    img:"https://images.unsplash.com/photo-1588776814546-ec7e64d1c8c6",
-    whatsapp:"https://wa.me/5599999999999"
-  },
-  {
-    nome:"Dorflex",
-    preco:11.50,
-    farmacia:"Drogaria Saúde",
-    img:"https://images.unsplash.com/photo-1588776814546-ec7e64d1c8c6",
-    whatsapp:"https://wa.me/5588888888888"
-  },
-  {
-    nome:"Dorflex",
-    preco:13.20,
-    farmacia:"Farmácia Popular",
-    img:"https://images.unsplash.com/photo-1588776814546-ec7e64d1c8c6",
-    whatsapp:"https://wa.me/5577777777777"
-  },
+  {nome:"Dorflex", preco:12.99, farmacia:"Farmácia Central", img:"https://images.unsplash.com/photo-1588776814546-ec7e64d1c8c6", whatsapp:"https://wa.me/5599999999999"},
+  {nome:"Dorflex", preco:11.50, farmacia:"Drogaria Saúde", img:"https://images.unsplash.com/photo-1588776814546-ec7e64d1c8c6", whatsapp:"https://wa.me/5588888888888"},
+  {nome:"Dorflex", preco:13.20, farmacia:"Farmácia Popular", img:"https://images.unsplash.com/photo-1588776814546-ec7e64d1c8c6", whatsapp:"https://wa.me/5577777777777"},
 
-  // ENO
-  {
-    nome:"Eno",
-    preco:8.50,
-    farmacia:"Farmácia Central",
-    img:"https://images.unsplash.com/photo-1603398938378-e54eab446dde",
-    whatsapp:"https://wa.me/5599999999999"
-  },
-  {
-    nome:"Eno",
-    preco:7.99,
-    farmacia:"Drogaria Saúde",
-    img:"https://images.unsplash.com/photo-1603398938378-e54eab446dde",
-    whatsapp:"https://wa.me/5588888888888"
-  },
-  {
-    nome:"Eno",
-    preco:9.00,
-    farmacia:"Farmácia Popular",
-    img:"https://images.unsplash.com/photo-1603398938378-e54eab446dde",
-    whatsapp:"https://wa.me/5577777777777"
-  }
+  {nome:"Eno", preco:8.50, farmacia:"Farmácia Central", img:"https://images.unsplash.com/photo-1603398938378-e54eab446dde", whatsapp:"https://wa.me/5599999999999"},
+  {nome:"Eno", preco:7.99, farmacia:"Drogaria Saúde", img:"https://images.unsplash.com/photo-1603398938378-e54eab446dde", whatsapp:"https://wa.me/5588888888888"},
+  {nome:"Eno", preco:9.00, farmacia:"Farmácia Popular", img:"https://images.unsplash.com/photo-1603398938378-e54eab446dde", whatsapp:"https://wa.me/5577777777777"}
 ];
-  
-function buscar(){  
-  const termo = document.getElementById("search").value.toLowerCase();  
-  const resultados = document.getElementById("resultados");  
-  resultados.innerHTML = "";  
-  
-  const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));  
-  filtrados.sort((a, b) => a.preco - b.preco);
-  
-  filtrados.forEach(p => {  
-    const card = document.createElement("div");  
-    card.className = "card";  
-  
-    card.innerHTML = `  
-      <img src="${p.img}">  
-      <div class="info">  
-        <h4>${p.nome}</h4>  
-        <p class="price">R$ ${p.preco}</p>  
-        <p>${p.farmacia}</p>  
-        <a class="btn" target="_blank" href="${p.whatsapp}?text=Olá, vi ${p.nome} no BuscaFarma">Comprar</a>  
-      </div>  
-    `;  
-  
-    resultados.appendChild(card);  
-  });  
-}  
-  const input = document.getElementById("search");  
-  
-input.addEventListener("input", () => {  
-  buscar();  
-});  
-  if ("serviceWorker" in navigator) {  
-  navigator.serviceWorker.register("./service-worker.js");  
-  }  
-</script>  </body>  
-  </html>
+
+function buscar(){
+  const termo = document.getElementById("search").value.toLowerCase();
+  const resultados = document.getElementById("resultados");
+
+  const filtrados = produtos
+    .filter(p => p.nome.toLowerCase().includes(termo))
+    .sort((a, b) => a.preco - b.preco);
+
+  const fragment = document.createDocumentFragment();
+
+  filtrados.forEach((p, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <img src="${p.img}" onerror="this.src='https://via.placeholder.com/80'">
+      <div class="info">
+        <h4>${p.nome}</h4>
+        <p class="price">R$ ${p.preco.toFixed(2)}</p>
+        <p>${p.farmacia}</p>
+        ${index === 0 ? '<span class="badge">🔥 Melhor preço</span>' : ''}
+        <a class="btn" target="_blank" rel="noopener noreferrer"
+           href="${p.whatsapp}?text=Olá, vi ${p.nome} no BuscaFarma">
+           Comprar
+        </a>
+      </div>
+    `;
+
+    fragment.appendChild(card);
+  });
+
+  resultados.innerHTML = "";
+  resultados.appendChild(fragment);
+}
+
+// eventos
+document.getElementById("search").addEventListener("input", buscar);
+document.getElementById("btnBuscar").addEventListener("click", buscar);
+
+// service worker
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js");
+}
+</script>
+
+</body>
+</html>
