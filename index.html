@@ -108,14 +108,14 @@ header {
 
 .patrocinado {
   background: linear-gradient(90deg, #f1c40f, #f39c12);
-  color: white;        /* texto branco */
-  font-weight: normal; /* tira o negrito */
+  color: white;
+  font-weight: normal;
   padding: 4px 8px;
   border-radius: 8px;
   font-size: 12px;
   margin-top: 5px;
   display: inline-block;
-  }
+}
 
 .btn {
   background: #2ecc71;
@@ -159,9 +159,21 @@ header {
 
 </div>
 
+<!-- 🔒 PAINEL ADMIN -->
 <div class="painel" id="painelAdmin" style="display:none;">
   <strong>📊 Painel Admin</strong><br>
   <div id="cliques"></div>
+
+  <button onclick="resetarCliques()" style="
+    margin-top:10px;
+    padding:8px;
+    border:none;
+    background:red;
+    color:white;
+    border-radius:8px;
+  ">
+    🔄 Zerar dados
+  </button>
 </div>
 
 <script>
@@ -180,10 +192,11 @@ const produtos = [
   {nome:"Paracetamol 750mg", preco:7.50, farmacia:"Farmácia Popular", img:"paracetamol.jpg"}
 ];
 
+// 📊 CONTADOR POR FARMÁCIA
 let cliques = JSON.parse(localStorage.getItem("cliques")) || {};
 
-function registrarClique(produto){
-  cliques[produto] = (cliques[produto] || 0) + 1;
+function registrarClique(farmacia){
+  cliques[farmacia] = (cliques[farmacia] || 0) + 1;
   localStorage.setItem("cliques", JSON.stringify(cliques));
   atualizarPainel();
 }
@@ -191,24 +204,31 @@ function registrarClique(produto){
 function atualizarPainel(){
   const div = document.getElementById("cliques");
   div.innerHTML = "";
-  for(let p in cliques){
-    div.innerHTML += `${p}: ${cliques[p]} cliques<br>`;
+
+  for(let f in cliques){
+    div.innerHTML += `🏪 ${f}: ${cliques[f]} cliques<br>`;
   }
 }
 
+// 🔄 RESETAR DADOS
+function resetarCliques(){
+  localStorage.removeItem("cliques");
+  cliques = {};
+  atualizarPainel();
+}
+
+// 🔍 BUSCA
 function buscar(){
   const termo = document.getElementById("search").value.toLowerCase();
   const resultados = document.getElementById("resultados");
 
   let filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
 
-  // 🔥 separar patrocinados e normais
   const patrocinados = filtrados.filter(p => p.patrocinado);
   const normais = filtrados
     .filter(p => !p.patrocinado)
     .sort((a,b) => a.preco - b.preco);
 
-  // 🔥 juntar (patrocinado primeiro)
   filtrados = [...patrocinados, ...normais];
 
   resultados.innerHTML = "";
@@ -232,7 +252,7 @@ function buscar(){
         <small>${p.farmacia}</small>
       </div>
       <a class="btn" target="_blank"
-        onclick="registrarClique('${p.nome}')"
+        onclick="registrarClique('${p.farmacia}')"
         href="https://wa.me/?text=Olá, quero ${p.nome}">
         Comprar
       </a>
@@ -242,6 +262,7 @@ function buscar(){
   });
 }
 
+// 🔒 MODO ADMIN
 if (window.location.search.includes("admin")) {
   document.getElementById("painelAdmin").style.display = "block";
   atualizarPainel();
