@@ -1,4 +1,4 @@
-const CACHE_NAME = "buscafarma-v1";
+const CACHE_NAME = "buscafarmav1";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
