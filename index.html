@@ -67,6 +67,12 @@ header {
   border-radius: 50%;
   width: 40px;
   height: 40px;
+  transition: transform 0.1s;
+}
+
+/* 🔥 efeito de clique */
+.search-box button:active {
+  transform: scale(0.9);
 }
 
 /* RESULTADOS */
@@ -113,6 +119,12 @@ header {
   border-radius: 8px;
   text-decoration: none;
   font-size: 13px;
+  transition: transform 0.1s;
+}
+
+/* 🔥 efeito botão comprar */
+.btn:active {
+  transform: scale(0.95);
 }
 </style>
 </head>
@@ -168,6 +180,16 @@ function buscar(){
 
   resultados.innerHTML = "";
 
+  // 🔥 mensagem quando não encontra
+  if(filtrados.length === 0){
+    resultados.innerHTML = `
+      <p style="text-align:center;color:gray;margin-top:20px;">
+        😕 Nenhum resultado encontrado
+      </p>
+    `;
+    return;
+  }
+
   filtrados.forEach((p, index) => {
     const card = document.createElement("div");
     card.className = "card";
@@ -176,7 +198,7 @@ function buscar(){
       <img src="${p.img}" onerror="this.src='https://via.placeholder.com/100'">
       <div class="info">
         <strong>${p.nome}</strong>
-        ${index === 0 ? '<span class="badge">  🔥 MELHOR PREÇO</span>' : ''}
+        ${index === 0 ? '<span class="badge">🔥 MELHOR PREÇO</span>' : ''}
         <div class="price">R$ ${p.preco.toFixed(2)}</div>
         <small>${p.farmacia}</small>
       </div>
@@ -192,6 +214,9 @@ function buscar(){
 
 document.getElementById("search").addEventListener("input", buscar);
 document.getElementById("btnBuscar").addEventListener("click", buscar);
+
+// 🔥 carrega automático ao abrir
+buscar();
 </script>
 
 </body>
