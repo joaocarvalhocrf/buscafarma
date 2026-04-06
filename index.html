@@ -141,7 +141,6 @@ header {
   border-radius: 10px;
 }
 
-/* 🔥 botão zerar */
 .btn-reset {
   margin-top: 10px;
   background: red;
@@ -180,9 +179,8 @@ header {
 
 </div>
 
-<!-- 🔥 PAINEL ADMIN -->
 <div class="painel" id="painelAdmin" style="display:none;">
-  <strong>📊 Painel Admin</strong><br>
+  <strong>📊 Cliques por Farmácia</strong><br>
   <div id="cliques"></div>
 
   <button class="btn-reset" onclick="resetarCliques()">
@@ -206,11 +204,12 @@ const produtos = [
   {nome:"Paracetamol 750mg", preco:7.50, farmacia:"Farmácia Popular", img:"paracetamol.jpg"}
 ];
 
-let cliques = JSON.parse(localStorage.getItem("cliques")) || {};
+let cliques = JSON.parse(localStorage.getItem("cliquesFarmacia")) || {};
 
-function registrarClique(produto){
-  cliques[produto] = (cliques[produto] || 0) + 1;
-  localStorage.setItem("cliques", JSON.stringify(cliques));
+/* 🔥 AGORA CONTA POR FARMÁCIA */
+function registrarClique(farmacia){
+  cliques[farmacia] = (cliques[farmacia] || 0) + 1;
+  localStorage.setItem("cliquesFarmacia", JSON.stringify(cliques));
   atualizarPainel();
 }
 
@@ -218,18 +217,16 @@ function atualizarPainel(){
   const div = document.getElementById("cliques");
   div.innerHTML = "";
 
-  for(let p in cliques){
-    div.innerHTML += `${p}: ${cliques[p]} cliques<br>`;
+  for(let f in cliques){
+    div.innerHTML += `${f}: ${cliques[f]} cliques<br>`;
   }
 }
 
-/* 🔥 NOVO: resetar cliques */
 function resetarCliques(){
-  const confirmar = confirm("Tem certeza que deseja apagar todos os cliques?");
-  
+  const confirmar = confirm("Apagar todos os cliques?");
   if(confirmar){
     cliques = {};
-    localStorage.removeItem("cliques");
+    localStorage.removeItem("cliquesFarmacia");
     atualizarPainel();
   }
 }
@@ -270,7 +267,7 @@ function buscar(){
         <small>${p.farmacia}</small>
       </div>
       <a class="btn" target="_blank"
-        onclick="registrarClique('${p.nome}')"
+        onclick="registrarClique('${p.farmacia}')"
         href="https://wa.me/?text=Olá, quero ${p.nome}">
         Comprar
       </a>
@@ -280,7 +277,6 @@ function buscar(){
   });
 }
 
-/* 🔥 ATIVAR ADMIN */
 if (window.location.search.includes("admin")) {
   document.getElementById("painelAdmin").style.display = "block";
   atualizarPainel();
