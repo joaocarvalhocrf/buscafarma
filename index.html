@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BuscaFarma</title>
@@ -27,9 +26,13 @@ header {
   font-weight: bold;
 }
 
-.local {
-  font-size: 14px;
-  color: gray;
+.btn-anunciar {
+  background: #2ecc71;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .banner {
@@ -57,7 +60,6 @@ header {
 .search-box input {
   flex: 1;
   border: none;
-  font-size: 16px;
 }
 
 .search-box button {
@@ -69,6 +71,7 @@ header {
   height: 40px;
 }
 
+/* CARD PRODUTO */
 .card {
   background: white;
   border-radius: 14px;
@@ -93,46 +96,65 @@ header {
 .price {
   color: #27ae60;
   font-weight: bold;
-  font-size: 18px;
 }
 
 .badge {
-  background: linear-gradient(90deg, #ff4757, #ff6b81);
+  background: #ff4757;
   color: white;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 12px;
-  margin-top: 5px;
-  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  display: block;
+  margin-top: 4px;
 }
 
 .patrocinado {
-  background: linear-gradient(90deg, #f1c40f, #f39c12);
+  background: #f1c40f;
   color: white;
-  font-weight: normal;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 12px;
-  margin-top: 5px;
-  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  display: block;
+  margin-top: 4px;
 }
 
 .btn {
   background: #2ecc71;
   color: white;
-  padding: 8px 10px;
+  padding: 8px;
   border-radius: 8px;
   text-decoration: none;
   font-size: 13px;
 }
 
-.painel {
-  background: #111;
-  color: #0f0;
-  padding: 10px;
-  font-size: 12px;
-  margin: 10px;
-  border-radius: 10px;
+/* TELA PLANOS */
+.planos {
+  padding: 15px;
+}
+
+.plano {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.plano h3 {
+  margin: 0;
+}
+
+.preco {
+  font-size: 20px;
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.voltar {
+  margin-bottom: 10px;
+  display: inline-block;
+  cursor: pointer;
+  color: #2ecc71;
 }
 </style>
 </head>
@@ -141,7 +163,7 @@ header {
 
 <header>
   <div class="logo">BuscaFarma</div>
-  <div class="local">📍 Iguaba Grande</div>
+  <div class="btn-anunciar" onclick="abrirPlanos()">Anunciar</div>
 </header>
 
 <div class="banner">
@@ -151,73 +173,27 @@ header {
 <div class="container">
 
   <div class="search-box">
-    <input type="text" id="search" placeholder="Digite o nome do remédio...">
-    <button id="btnBuscar">🔍</button>
+    <input type="text" id="search" placeholder="Buscar remédio...">
+    <button onclick="buscar()">🔍</button>
   </div>
 
   <div id="resultados"></div>
 
 </div>
 
-<!-- 🔒 PAINEL ADMIN -->
-<div class="painel" id="painelAdmin" style="display:none;">
-  <strong>📊 Painel Admin</strong><br>
-  <div id="cliques"></div>
-
-  <button onclick="resetarCliques()" style="
-    margin-top:10px;
-    padding:8px;
-    border:none;
-    background:red;
-    color:white;
-    border-radius:8px;
-  ">
-    🔄 Zerar dados
-  </button>
-</div>
-
 <script>
 const produtos = [
+  {nome:"Dipirona 500mg", preco:5.99, farmacia:"Farmácia Central", img:"dipirona.jpg", patrocinado:true},
+  {nome:"Dipirona 500mg", preco:4.99, farmacia:"Farmácia Popular", img:"dipirona.jpg"},
 
-  {nome:"Dipirona 500mg", preco:5.99, farmacia:"Farmácia Central", img:"dipirona-500mg-com-10-comprimidos-4720aabb2f.jpg", patrocinado:true},
-  {nome:"Dipirona 500mg", preco:6.49, farmacia:"Drogaria Saúde", img:"dipirona-500mg-com-10-comprimidos-4720aabb2f.jpg"},
-  {nome:"Dipirona 500mg", preco:4.99, farmacia:"Farmácia Popular", img:"dipirona-500mg-com-10-comprimidos-4720aabb2f.jpg"},
-
-  {nome:"Dorflex", preco:12.99, farmacia:"Farmácia Central", img:"dorflex.jpg"},
   {nome:"Dorflex", preco:11.50, farmacia:"Drogaria Saúde", img:"dorflex.jpg", patrocinado:true},
   {nome:"Dorflex", preco:13.20, farmacia:"Farmácia Popular", img:"dorflex.jpg"},
 
-  {nome:"Paracetamol 750mg", preco:6.99, farmacia:"Farmácia Central", img:"paracetamol.jpeg"},
-  {nome:"Paracetamol 750mg", preco:5.90, farmacia:"Drogaria Saúde", img:"paracetamol.jpeg"},
-  {nome:"Paracetamol 750mg", preco:7.50, farmacia:"Farmácia Popular", img:"paracetamol.jpeg"}
+  {nome:"Paracetamol 750mg", preco:5.90, farmacia:"Drogaria Saúde", img:"paracetamol.jpg"},
+  {nome:"Paracetamol 750mg", preco:7.50, farmacia:"Farmácia Popular", img:"paracetamol.jpg"}
 ];
 
-// 📊 CONTADOR POR FARMÁCIA
-let cliques = JSON.parse(localStorage.getItem("cliques")) || {};
-
-function registrarClique(farmacia){
-  cliques[farmacia] = (cliques[farmacia] || 0) + 1;
-  localStorage.setItem("cliques", JSON.stringify(cliques));
-  atualizarPainel();
-}
-
-function atualizarPainel(){
-  const div = document.getElementById("cliques");
-  div.innerHTML = "";
-
-  for(let f in cliques){
-    div.innerHTML += `🏪 ${f}: ${cliques[f]} cliques<br>`;
-  }
-}
-
-// 🔄 RESETAR DADOS
-function resetarCliques(){
-  localStorage.removeItem("cliques");
-  cliques = {};
-  atualizarPainel();
-}
-
-// 🔍 BUSCA
+// BUSCA
 function buscar(){
   const termo = document.getElementById("search").value.toLowerCase();
   const resultados = document.getElementById("resultados");
@@ -225,35 +201,32 @@ function buscar(){
   let filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
 
   const patrocinados = filtrados.filter(p => p.patrocinado);
-  const normais = filtrados
-    .filter(p => !p.patrocinado)
-    .sort((a,b) => a.preco - b.preco);
+  const normais = filtrados.filter(p => !p.patrocinado).sort((a,b)=>a.preco-b.preco);
 
   filtrados = [...patrocinados, ...normais];
 
   resultados.innerHTML = "";
 
   if(filtrados.length === 0){
-    resultados.innerHTML = `<p style="text-align:center;color:gray;">😕 Nenhum resultado encontrado</p>`;
+    resultados.innerHTML = `<p style="text-align:center;color:gray;">Nenhum resultado</p>`;
     return;
   }
 
-  filtrados.forEach((p, index) => {
+  filtrados.forEach((p,index)=>{
     const card = document.createElement("div");
-    card.className = "card";
+    card.className="card";
 
     card.innerHTML = `
       <img src="${p.img}" onerror="this.src='https://via.placeholder.com/100'">
       <div class="info">
-        <strong>${p.nome}</strong><br>
-        ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
-        ${!p.patrocinado && index === patrocinados.length ? '<div class="badge">🔥 Melhor preço</div>' : ''}
+        <strong>${p.nome}</strong>
+        ${p.patrocinado ? '<span class="patrocinado">Patrocinado</span>' : ''}
+        ${!p.patrocinado && index===patrocinados.length ? '<span class="badge">🔥 Melhor preço</span>' : ''}
         <div class="price">R$ ${p.preco.toFixed(2)}</div>
         <small>${p.farmacia}</small>
       </div>
       <a class="btn" target="_blank"
-        onclick="registrarClique('${p.farmacia}')"
-        href="https://wa.me/?text=Olá, quero ${p.nome}">
+        href="https://wa.me/?text=Quero ${p.nome}">
         Comprar
       </a>
     `;
@@ -262,15 +235,37 @@ function buscar(){
   });
 }
 
-// 🔒 MODO ADMIN
-if (window.location.search.includes("admin")) {
-  document.getElementById("painelAdmin").style.display = "block";
-  atualizarPainel();
+// TELA PLANOS
+function abrirPlanos(){
+  const resultados = document.getElementById("resultados");
+
+  resultados.innerHTML = `
+    <div class="planos">
+      <div class="voltar" onclick="buscar()">⬅ Voltar</div>
+
+      <h2>Planos para Farmácias</h2>
+
+      <div class="plano">
+        <h3>Plano Essencial</h3>
+        <p>Aparece na busca</p>
+        <div class="preco">Grátis</div>
+      </div>
+
+      <div class="plano">
+        <h3>Plano Destaque</h3>
+        <p>Fica no topo + mais cliques</p>
+        <div class="preco">R$29,90/mês</div>
+        <a class="btn" target="_blank"
+        href="https://wa.me/?text=Quero anunciar no plano destaque">
+        Quero anunciar
+        </a>
+      </div>
+
+    </div>
+  `;
 }
 
-document.getElementById("search").addEventListener("input", buscar);
-document.getElementById("btnBuscar").addEventListener("click", buscar);
-
+// inicial
 buscar();
 </script>
 
