@@ -71,7 +71,7 @@ header {
   height: 40px;
 }
 
-/* CARD PRODUTO */
+/* CARD */
 .card {
   background: white;
   border-radius: 14px;
@@ -127,7 +127,7 @@ header {
   font-size: 13px;
 }
 
-/* TELA PLANOS */
+/* PLANOS */
 .planos {
   padding: 15px;
 }
@@ -136,7 +136,7 @@ header {
   background: white;
   border-radius: 12px;
   padding: 15px;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
@@ -148,6 +148,15 @@ header {
   font-size: 20px;
   color: #2ecc71;
   font-weight: bold;
+  margin-top: 5px;
+}
+
+/* 🔥 NOVO ESPAÇAMENTO DO BOTÃO */
+.plano .btn {
+  display: block;
+  margin-top: 15px; /* AQUI resolve o problema */
+  text-align: center;
+  padding: 10px;
 }
 
 .voltar {
@@ -193,7 +202,6 @@ const produtos = [
   {nome:"Paracetamol 750mg", preco:7.50, farmacia:"Farmácia Popular", img:"paracetamol.jpg"}
 ];
 
-// BUSCA
 function buscar(){
   const termo = document.getElementById("search").value.toLowerCase();
   const resultados = document.getElementById("resultados");
@@ -235,7 +243,6 @@ function buscar(){
   });
 }
 
-// TELA PLANOS
 function abrirPlanos(){
   const resultados = document.getElementById("resultados");
 
@@ -255,6 +262,7 @@ function abrirPlanos(){
         <h3>Plano Destaque</h3>
         <p>Fica no topo + mais cliques</p>
         <div class="preco">R$29,90/mês</div>
+
         <a class="btn" target="_blank"
         href="https://wa.me/?text=Quero anunciar no plano destaque">
         Quero anunciar
@@ -265,7 +273,6 @@ function abrirPlanos(){
   `;
 }
 
-// inicial
 buscar();
 </script>
 
