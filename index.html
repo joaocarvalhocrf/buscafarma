@@ -189,18 +189,21 @@ header {
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-// 🔥 COLE AQUI SUA CONFIG DO FIREBASE
 const firebaseConfig = {
-  apiKey: "AIzaSyDK31lrk1SaWE-muumhYJIJ2mBRvq_T8EA",
+  apiKey: "AIzaSy...",
   authDomain: "buscafarma-a4c3c.firebaseapp.com",
-  projectId: "buscafarma-a4c3c",
-  storageBucket: "buscafarma-a4c3c.firebasestorage.app",
-  messagingSenderId: "457560066459",
-  appId: "1:457560066459:web:4389b9fe057c7362a5f93e"
+  projectId: "buscafarma-a4c3c"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
+// SERVICE WORKER 🔥
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js")
+    .then(() => console.log("SW ativo"))
+    .catch(err => console.log(err));
+}
 
 // PRODUTOS
 const produtos = [
@@ -217,48 +220,34 @@ const produtos = [
   {nome:"Paracetamol 750mg", preco:7.50, farmacia:"Farmácia Popular", img:"paracetamol.jpg"}
 ];
 
-// 🔥 REGISTRAR CLIQUE GLOBAL
 function registrarClique(farmacia){
   const ref = db.collection("cliques").doc(farmacia);
-
   ref.get().then(doc => {
     if(doc.exists){
-      ref.update({
-        total: doc.data().total + 1
-      });
+      ref.update({ total: doc.data().total + 1 });
     } else {
-      ref.set({
-        total: 1
-      });
+      ref.set({ total: 1 });
     }
   });
 }
 
-// 🔥 ATUALIZAR PAINEL
 function atualizarPainel(){
   const div = document.getElementById("cliques");
-  div.innerHTML = "Carregando...";
-
   db.collection("cliques").get().then(snapshot => {
     div.innerHTML = "";
-
     snapshot.forEach(doc => {
-      div.innerHTML += `${doc.id}: ${doc.data().total} cliques<br>`;
+      div.innerHTML += `${doc.id}: ${doc.data().total}<br>`;
     });
   });
 }
 
-// 🔥 ZERAR CLIQUES
 function zerarCliques(){
   db.collection("cliques").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      doc.ref.delete();
-    });
+    snapshot.forEach(doc => doc.ref.delete());
     atualizarPainel();
   });
 }
 
-// BUSCA
 function buscar(){
   const termo = document.getElementById("search").value.toLowerCase();
   const resultados = document.getElementById("resultados");
@@ -266,9 +255,7 @@ function buscar(){
   let filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
 
   const patrocinados = filtrados.filter(p => p.patrocinado);
-  const normais = filtrados
-    .filter(p => !p.patrocinado)
-    .sort((a,b) => a.preco - b.preco);
+  const normais = filtrados.filter(p => !p.patrocinado).sort((a,b)=>a.preco-b.preco);
 
   filtrados = [...patrocinados, ...normais];
 
@@ -282,36 +269,31 @@ function buscar(){
   filtrados.forEach((p, index) => {
     const isMelhorPreco = !p.patrocinado && index === patrocinados.length;
 
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <img src="${p.img}" onerror="this.src='https://via.placeholder.com/100'">
-      <div class="info">
-        <strong>${p.nome}</strong><br>
-        ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
-        ${isMelhorPreco ? '<div class="badge">🔥 Melhor preço</div>' : ''}
-        <div class="price">R$ ${p.preco.toFixed(2)}</div>
-        <small>${p.farmacia}</small>
+    resultados.innerHTML += `
+      <div class="card">
+        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/100'">
+        <div class="info">
+          <strong>${p.nome}</strong><br>
+          ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
+          ${isMelhorPreco ? '<div class="badge">🔥 Melhor preço</div>' : ''}
+          <div class="price">R$ ${p.preco.toFixed(2)}</div>
+          <small>${p.farmacia}</small>
+        </div>
+        <a class="btn" target="_blank"
+          onclick="registrarClique('${p.farmacia}')"
+          href="https://wa.me/?text=Olá, quero ${p.nome}">
+          Comprar
+        </a>
       </div>
-      <a class="btn" target="_blank"
-        onclick="registrarClique('${p.farmacia}')"
-        href="https://wa.me/?text=Olá, quero ${p.nome}">
-        Comprar
-      </a>
     `;
-
-    resultados.appendChild(card);
   });
 }
 
-// ADMIN
 if (window.location.search.includes("admin")) {
   document.getElementById("painelAdmin").style.display = "block";
   atualizarPainel();
 }
 
-// EVENTOS
 document.getElementById("search").addEventListener("input", buscar);
 document.getElementById("btnBuscar").addEventListener("click", buscar);
 
