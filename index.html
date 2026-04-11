@@ -324,6 +324,7 @@ function carregarProdutosDoBanco() {
     snapshot.forEach((doc) => {
       produtos.push(doc.data());  
     });
+   alert("Recebi " + produtos.length + " produtos do banco!");
     
     // Chama a função buscar() que você já tem para desenhar os cards na tela
     buscar(); 
