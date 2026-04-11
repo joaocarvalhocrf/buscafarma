@@ -13,14 +13,19 @@
         label { font-size: 14px; font-weight: bold; color: #555; display: block; margin-top: 10px; }
         button { width: 100%; padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 15px; }
         .item-lista { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 10px 0; }
-        .btn-delete { background: #ff4757; width: auto; padding: 5px 10px; font-size: 11px; margin-top: 0; }
+        .btn-delete { background: #ff4757; width: auto; padding: 5px 10px; font-size: 11px; margin-top: 0; margin-left: 5px; }
+        .btn-edit { background: #3498db; width: auto; padding: 5px 10px; font-size: 11px; margin-top: 0; }
         img { width: 50px; height: 50px; object-fit: contain; }
+        .botoes-acao { display: flex; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h2>🚀 Cadastrar Produto</h2>
+    <h2 id="titulo-form">🚀 Cadastrar Produto</h2>
+    
+    <input type="hidden" id="produtoId">
+
     <input type="text" id="nome" placeholder="Nome do Remédio">
     <input type="number" id="preco" placeholder="Preço (ex: 12.50)" step="0.01">
     <input type="text" id="farmacia" placeholder="Nome da Farmácia">
@@ -36,7 +41,8 @@
     </select>
 
     <label><input type="checkbox" id="patrocinado"> ⭐ Patrocinado</label>
-    <button onclick="salvar()">Salvar Produto</button>
+    <button id="btn-salvar" onclick="salvar()">Salvar Produto</button>
+    <button id="btn-cancelar" onclick="limparFormulario()" style="background: #95a5a6; display: none;">Cancelar Edição</button>
 </div>
 
 <div class="box">
@@ -56,7 +62,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// FUNÇÃO PARA SALVAR OU ATUALIZAR
 function salvar() {
+    const id = document.getElementById('produtoId').value;
     const doc = {
         nome: document.getElementById('nome').value,
         preco: parseFloat(document.getElementById('preco').value),
@@ -69,26 +77,70 @@ function salvar() {
 
     if(!doc.nome || isNaN(doc.preco)) return alert("Preencha Nome e Preço!");
 
-    db.collection("produtos").add(doc).then(() => {
-        alert("Cadastrado com sucesso!");
-        document.getElementById('nome').value = "";
-        document.getElementById('preco').value = "";
-    });
+    if (id) {
+        // MODO EDIÇÃO
+        db.collection("produtos").doc(id).update(doc).then(() => {
+            alert("Atualizado com sucesso!");
+            limparFormulario();
+        });
+    } else {
+        // MODO CADASTRO
+        db.collection("produtos").add(doc).then(() => {
+            alert("Cadastrado com sucesso!");
+            limparFormulario();
+        });
+    }
 }
 
+// FUNÇÃO PARA PREPARAR A EDIÇÃO (Puxa os dados para o form)
+function prepararEdicao(id, nome, preco, categoria, farmacia, img, patrocinado) {
+    document.getElementById('produtoId').value = id;
+    document.getElementById('nome').value = nome;
+    document.getElementById('preco').value = preco;
+    document.getElementById('categoria').value = categoria;
+    document.getElementById('farmacia').value = farmacia;
+    document.getElementById('imgUrl').value = img;
+    document.getElementById('patrocinado').checked = patrocinado;
+
+    // Ajusta a interface
+    document.getElementById('titulo-form').innerText = "📝 Editando Produto";
+    document.getElementById('btn-salvar').innerText = "Confirmar Alteração";
+    document.getElementById('btn-cancelar').style.display = "block";
+    window.scrollTo(0, 0);
+}
+
+// FUNÇÃO PARA LIMPAR FORMULÁRIO
+function limparFormulario() {
+    document.getElementById('produtoId').value = "";
+    document.getElementById('nome').value = "";
+    document.getElementById('preco').value = "";
+    document.getElementById('farmacia').value = "";
+    document.getElementById('imgUrl').value = "";
+    document.getElementById('patrocinado').checked = false;
+
+    document.getElementById('titulo-form').innerText = "🚀 Cadastrar Produto";
+    document.getElementById('btn-salvar').innerText = "Salvar Produto";
+    document.getElementById('btn-cancelar').style.display = "none";
+}
+
+// LISTAGEM EM TEMPO REAL COM BOTÃO EDITAR
 db.collection("produtos").orderBy("dataCriacao", "desc").onSnapshot((snapshot) => {
     const container = document.getElementById("lista-produtos");
     container.innerHTML = "";
     snapshot.forEach((doc) => {
         const p = doc.data();
+        // Criamos o HTML com os dados protegidos por aspas para não dar erro no clique
         container.innerHTML += `
             <div class="item-lista">
                 <img src="${p.img}">
-                <div>
+                <div style="flex: 1; margin-left: 10px;">
                     <strong>${p.nome}</strong><br>
                     <small>${p.categoria} | R$ ${Number(p.preco).toFixed(2)}</small>
                 </div>
-                <button class="btn-delete" onclick="deletar('${doc.id}')">Excluir</button>
+                <div class="botoes-acao">
+                    <button class="btn-edit" onclick="prepararEdicao('${doc.id}', '${p.nome}', ${p.preco}, '${p.categoria}', '${p.farmacia}', '${p.img}', ${p.patrocinado})">Editar</button>
+                    <button class="btn-delete" onclick="deletar('${doc.id}')">Excluir</button>
+                </div>
             </div>
         `;
     });
