@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Cliques - BuscaFarma</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; color: #333; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #2ecc71; text-align: center; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; }
+        .linha-clique { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 16px; }
+        .linha-clique:last-child { border-bottom: none; }
+        .farmacia-nome { font-weight: bold; }
+        .clique-qtd { background: #2ecc71; color: white; padding: 2px 10px; border-radius: 15px; font-size: 14px; }
+        .btn-zerar { width: 100%; margin-top: 20px; padding: 12px; background: #ff4757; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .btn-zerar:hover { background: #ff6b81; }
+        .stats { margin-top: 15px; font-size: 13px; color: #7f8c8d; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📈 Cliques por Farmácia</h2>
+    
+    <div id="lista-cliques">Carregando dados...</div>
+
+    <div class="stats" id="total-geral"></div>
+
+    <button class="btn-zerar" onclick="zerarRelatorio()">🗑️ Zerar Todos os Cliques</button>
+</div>
+
+<script>
+// CONFIGURAÇÃO (Use a mesma do seu index/admin)
+const firebaseConfig = {
+  apiKey: "AIzaSyDK31lrk1SaWE-muumhYJIJ2mBRvq_T8EA",
+  authDomain: "buscafarma-a4c3c.firebaseapp.com",
+  projectId: "buscafarma-a4c3c",
+  storageBucket: "buscafarma-a4c3c.firebasestorage.app",
+  messagingSenderId: "457560066459",
+  appId: "1:457560066459:web:4389b9fe057c7362a5f93e"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// 1. FUNÇÃO PARA LER OS CLIQUES EM TEMPO REAL
+function monitorarCliques() {
+    db.collection("cliques").onSnapshot((snapshot) => {
+        const lista = document.getElementById("lista-cliques");
+        const stats = document.getElementById("total-geral");
+        let totalCliques = 0;
+        
+        lista.innerHTML = "";
+
+        if (snapshot.empty) {
+            lista.innerHTML = "<p style='text-align:center;'>Nenhum clique registrado ainda.</p>";
+            stats.innerHTML = "";
+            return;
+        }
+
+        snapshot.forEach((doc) => {
+            const dados = doc.data();
+            totalCliques += dados.total;
+
+            lista.innerHTML += `
+                <div class="linha-clique">
+                    <span class="farmacia-nome">${doc.id}</span>
+                    <span class="clique-qtd">${dados.total} cliques</span>
+                </div>
+            `;
+        });
+
+        stats.innerHTML = `Soma total de todos os acessos: <strong>${totalCliques}</strong>`;
+    });
+}
+
+// 2. FUNÇÃO PARA ZERAR (APAGAR OS DOCUMENTOS)
+function zerarRelatorio() {
+    if (confirm("Deseja REALMENTE zerar todas as estatísticas de cliques? Isso não pode ser desfeito.")) {
+        db.collection("cliques").get().then((snapshot) => {
+            const batch = db.batch(); // Usa um lote para apagar tudo de uma vez
+            snapshot.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+            return batch.commit();
+        }).then(() => {
+            alert("Relatório zerado com sucesso!");
+        }).catch((erro) => {
+            console.error("Erro ao zerar:", erro);
+            alert("Erro ao zerar banco de dados.");
+        });
+    }
+}
+
+// Iniciar monitoramento
+monitorarCliques();
+</script>
+
+</body>
+</html>
