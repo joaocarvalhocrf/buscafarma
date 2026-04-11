@@ -110,10 +110,11 @@ function buscar() {
         card.innerHTML = `
             <img src="${p.img}">
             <div class="info">
-                ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
                 <strong>${p.nome}</strong><br>
-                <small>${p.categoria}</small><br>
+                
+                ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
                 ${isMelhorPreco ? '<div class="badge">🔥 Melhor Preço</div>' : ''}
+                <br> <small>${p.categoria}</small><br>
                 <div class="price">R$ ${Number(p.preco).toFixed(2)}</div>
                 <small>${p.farmacia}</small>
             </div>
@@ -121,7 +122,6 @@ function buscar() {
         `;
         resultados.appendChild(card);
     });
-}
 
 db.collection("produtos").onSnapshot((snapshot) => {
     produtos = [];
