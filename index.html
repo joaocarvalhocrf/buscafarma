@@ -220,12 +220,11 @@ let deferredPrompt;
 const btnInstall = document.getElementById("btnInstall");
 const isAdmin = window.location.search.includes("admin");
 
-// 🔥 FORÇA ESCONDER SE FOR ADMIN
+// 🔥 esconder no admin
 if (isAdmin) {
   btnInstall.style.display = "none";
 }
 
-// captura evento real
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -235,9 +234,8 @@ window.addEventListener("beforeinstallprompt", (e) => {
   }
 });
 
-// clique no botão
 btnInstall.addEventListener("click", async () => {
-  if (isAdmin) return; // 🚫 bloqueia admin
+  if (isAdmin) return;
 
   if (deferredPrompt) {
     deferredPrompt.prompt();
@@ -248,18 +246,17 @@ btnInstall.addEventListener("click", async () => {
     }
 
     deferredPrompt = null;
+  } else {
+    // fallback correto
+    alert("Para instalar:\nMenu do navegador > Adicionar à tela inicial");
   }
-});
-    // fallback (quando não aparece automático)
-    alert("Para instalar o app:\n\n1. Clique nos 3 pontinhos do navegador\n2. Toque em 'Adicionar à tela inicial'\n\nFunciona igual um app 👍");
-  }
-
 });
 
 // quando instala
 window.addEventListener("appinstalled", () => {
   btnInstall.style.display = "none";
 });
+
 
 // fallback: força aparecer depois de 3s
 setTimeout(() => {
