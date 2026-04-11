@@ -108,17 +108,25 @@ function buscar() {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-            <img src="${p.img}">
+            <img src="${p.img || 'https://via.placeholder.com/150'}">
             <div class="info">
                 <strong>${p.nome}</strong><br>
                 
                 ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
                 ${isMelhorPreco ? '<div class="badge">🔥 Melhor Preço</div>' : ''}
-                <br> <small>${p.categoria}</small><br>
+                
+                <div style="margin-top: 5px;">
+                    <small style="color: #7f8c8d;">📂 ${p.categoria}</small>
+                </div>
+                
                 <div class="price">R$ ${Number(p.preco).toFixed(2)}</div>
                 <small>${p.farmacia}</small>
             </div>
-            <a class="btn-comprar" target="_blank" onclick="registrarClique('${p.farmacia}')" href="https://wa.me/?text=Olá, quero ${p.nome}">Comprar</a>
+            <a class="btn-comprar" target="_blank" 
+               onclick="registrarClique('${p.farmacia}')" 
+               href="https://wa.me/5522981495667?text=Olá, quero ${p.nome}">
+               Comprar
+            </a>
         `;
         resultados.appendChild(card);
     });
