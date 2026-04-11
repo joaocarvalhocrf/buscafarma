@@ -334,6 +334,15 @@ function buscar(){
 
   resultados.innerHTML = "";
 
+  if(filtrados.length === 0){
+  resultados.innerHTML = `
+    <p style="text-align:center;color:gray;margin-top:20px;">
+      😕 Nenhum resultado encontrado
+    </p>
+  `;
+  return;
+  }
+
   filtrados.forEach((p, index) => {
     const isMelhorPreco = !p.patrocinado && index === patrocinados.length;
 
