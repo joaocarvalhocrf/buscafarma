@@ -105,7 +105,6 @@ header {
 
 .badge, .patrocinado {
   display: inline-block;
-  width: fit-content;
   padding: 4px 8px;
   border-radius: 8px;
   font-size: 12px;
@@ -120,7 +119,6 @@ header {
 .patrocinado {
   background: #f1c40f;
   color: white;
-  font-weight: normal;
 }
 
 .btn {
@@ -150,7 +148,7 @@ header {
   margin-top: 5px;
 }
 
-  .btn-install {
+.btn-install {
   position: fixed;
   bottom: 15px;
   left: 15px;
@@ -163,19 +161,17 @@ header {
   font-weight: bold;
   display: none;
   z-index: 999;
-  }
-  
+}
 </style>
 </head>
 
-  
 <body>
 
 <header>
   <div class="logo">BuscaFarma</div>
 
   <a class="btn-anunciar" target="_blank"
-     href="https://wa.me/5522981495667?text=Olá,%20tenho%20uma%20farmácia%20e%20quero%20anunciar%20no%20BuscaFarma.%20Pode%20me%20explicar%20como%20funciona%20e%20os%20valores?">
+     href="https://wa.me/5522981495667?text=Olá,%20tenho%20uma%20farmácia%20e%20quero%20anunciar%20no%20BuscaFarma">
      Anunciar
   </a>
 </header>
@@ -202,35 +198,52 @@ header {
 </div>
 
 <div class="btn-install" id="btnInstall">
-  📲 Instalar App
+📲 Instalar App
 </div>
-  
+
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-
-  if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js")
+// SERVICE WORKER (CORRETO)
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/buscafarma/service-worker.js")
     .then(() => console.log("Service Worker registrado"))
     .catch(err => console.log("Erro SW:", err));
+}
+
+// INSTALAR APP
+let deferredPrompt;
+const btnInstall = document.getElementById("btnInstall");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  btnInstall.style.display = "block";
+});
+
+btnInstall.addEventListener("click", () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      btnInstall.style.display = "none";
+      deferredPrompt = null;
+    });
   }
-  
-// 🔥 COLE AQUI SUA CONFIG DO FIREBASE
+});
+
+// FIREBASE
 const firebaseConfig = {
-  apiKey: "AIzaSyDK31lrk1SaWE-muumhYJIJ2mBRvq_T8EA",
+  apiKey: "AIza...",
   authDomain: "buscafarma-a4c3c.firebaseapp.com",
-  projectId: "buscafarma-a4c3c",
-  storageBucket: "buscafarma-a4c3c.firebasestorage.app",
-  messagingSenderId: "457560066459",
-  appId: "1:457560066459:web:4389b9fe057c7362a5f93e"
+  projectId: "buscafarma-a4c3c"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// PRODUTOS
+// PRODUTOS (ORIGINAL)
 const produtos = [
   {nome:"Dipirona 500mg", preco:5.99, farmacia:"Farmácia Central", img:"dipirona.jpg", patrocinado:true},
   {nome:"Dipirona 500mg", preco:6.49, farmacia:"Drogaria Saúde", img:"dipirona.jpg"},
@@ -245,43 +258,36 @@ const produtos = [
   {nome:"Paracetamol 750mg", preco:7.50, farmacia:"Farmácia Popular", img:"paracetamol.jpg"}
 ];
 
-// 🔥 REGISTRAR CLIQUE GLOBAL
+// CLIQUES GLOBAL
 function registrarClique(farmacia){
   const ref = db.collection("cliques").doc(farmacia);
 
   ref.get().then(doc => {
     if(doc.exists){
-      ref.update({
-        total: doc.data().total + 1
-      });
+      ref.update({ total: doc.data().total + 1 });
     } else {
-      ref.set({
-        total: 1
-      });
+      ref.set({ total: 1 });
     }
   });
 }
 
-// 🔥 ATUALIZAR PAINEL
+// PAINEL
 function atualizarPainel(){
   const div = document.getElementById("cliques");
   div.innerHTML = "Carregando...";
 
   db.collection("cliques").get().then(snapshot => {
     div.innerHTML = "";
-
     snapshot.forEach(doc => {
       div.innerHTML += `${doc.id}: ${doc.data().total} cliques<br>`;
     });
   });
 }
 
-// 🔥 ZERAR CLIQUES
+// ZERAR
 function zerarCliques(){
   db.collection("cliques").get().then(snapshot => {
-    snapshot.forEach(doc => {
-      doc.ref.delete();
-    });
+    snapshot.forEach(doc => doc.ref.delete());
     atualizarPainel();
   });
 }
@@ -294,18 +300,12 @@ function buscar(){
   let filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
 
   const patrocinados = filtrados.filter(p => p.patrocinado);
-  const normais = filtrados
-    .filter(p => !p.patrocinado)
+  const normais = filtrados.filter(p => !p.patrocinado)
     .sort((a,b) => a.preco - b.preco);
 
   filtrados = [...patrocinados, ...normais];
 
   resultados.innerHTML = "";
-
-  if(filtrados.length === 0){
-    resultados.innerHTML = `<p style="text-align:center;color:gray;">😕 Nenhum resultado encontrado</p>`;
-    return;
-  }
 
   filtrados.forEach((p, index) => {
     const isMelhorPreco = !p.patrocinado && index === patrocinados.length;
@@ -331,33 +331,8 @@ function buscar(){
 
     resultados.appendChild(card);
   });
-  
 }
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js")
-    .then(() => console.log("Service Worker registrado"))
-    .catch(err => console.log("Erro SW:", err));
-  }
 
-  let deferredPrompt;
-const btnInstall = document.getElementById("btnInstall");
-
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  btnInstall.style.display = "block";
-});
-
-btnInstall.addEventListener("click", () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      btnInstall.style.display = "none";
-      deferredPrompt = null;
-    });
-  }
-});
-  
 // ADMIN
 if (window.location.search.includes("admin")) {
   document.getElementById("painelAdmin").style.display = "block";
@@ -372,4 +347,4 @@ buscar();
 </script>
 
 </body>
-</html>
+  </html>
