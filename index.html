@@ -1,342 +1,111 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BuscaFarma</title>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  
-
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #f5f5f5;
-}
-
-header {
-  background: white;
-  padding: 12px 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.logo {
-  color: #2ecc71;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.btn-anunciar {
-  background: #2ecc71;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 20px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.banner {
-  height: 120px;
-  background: linear-gradient(90deg, #2ecc71, #27ae60);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.container {
-  padding: 15px;
-}
-
-  .search-box {
-  position: sticky;
-  top: 10px;
-  z-index: 100;
-  /* ... mantenha o resto do seu estilo */
-  }
-  
-.search-box {
-  background: white;
-  border-radius: 30px;
-  display: flex;
-  padding: 12px;
-  margin-top: -20px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-}
-
-.search-box input {
-  flex: 1;
-  border: none;
-  font-size: 16px;
-}
-
-.search-box button {
-  background: #2ecc71;
-  border: none;
-  color: white;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-}
-
-.card {
-  background: white;
-  border-radius: 14px;
-  margin-top: 12px;
-  padding: 12px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-.card img {
-  width: 70px;
-  height: 70px;
-  object-fit: contain;
-}
-
-.info {
-  flex: 1;
-}
-
-.price {
-  color: #27ae60;
-  font-weight: bold;
-  font-size: 18px;
-  margin-top: 5px;
-}
-
-.badge, .patrocinado {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 12px;
-  margin-top: 6px;
-}
-
-.badge {
-  background: #ff4757;
-  color: white;
-}
-
-.patrocinado {
-  background: #f1c40f;
-  color: white;
-}
-
-.btn {
-  background: #2ecc71;
-  color: white;
-  padding: 8px 10px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 13px;
-}
-
-.painel {
-  background: #111;
-  color: #0f0;
-  padding: 10px;
-  font-size: 12px;
-  margin: 10px;
-  border-radius: 10px;
-}
-
-.btn-reset {
-  background: red;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  margin-top: 5px;
-}
-
+  body { margin: 0; font-family: Arial; background: #f5f5f5; }
+  header { background: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .logo { color: #2ecc71; font-size: 20px; font-weight: bold; }
+  .btn-anunciar { background: #2ecc71; color: white; padding: 8px 14px; border-radius: 20px; text-decoration: none; font-size: 14px; font-weight: bold; }
+  .banner { height: 120px; background: linear-gradient(90deg, #2ecc71, #27ae60); display: flex; align-items: center; justify-content: center; color: white; }
+  .container { padding: 15px; }
+  .search-box { background: white; border-radius: 30px; display: flex; padding: 12px; margin-top: -20px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); position: sticky; top: 10px; z-index: 100; }
+  .search-box input { flex: 1; border: none; font-size: 16px; outline: none; }
+  .search-box button { background: #2ecc71; border: none; color: white; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; }
+  .card { background: white; border-radius: 14px; margin-top: 12px; padding: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+  .card img { width: 70px; height: 70px; object-fit: contain; }
+  .info { flex: 1; }
+  .price { color: #27ae60; font-weight: bold; font-size: 18px; margin-top: 5px; }
+  .badge { background: #ff4757; color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; display: inline-block; }
+  .patrocinado { background: #f1c40f; color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; display: inline-block; }
+  .btn { background: #2ecc71; color: white; padding: 8px 10px; border-radius: 8px; text-decoration: none; font-size: 13px; }
 </style>
 </head>
-
 <body>
 
 <header>
   <div class="logo">BuscaFarma</div>
-
-  <a class="btn-anunciar" target="_blank"
-     href="https://wa.me/5522981495667?text=Olá,%20tenho%20uma%20farmácia%20e%20quero%20anunciar%20no%20BuscaFarma">
-     Anunciar
-  </a>
+  <a class="btn-anunciar" target="_blank" href="https://wa.me/5522981495667">Anunciar</a>
 </header>
 
-<div class="banner">
-  Encontre o melhor preço 💊
-</div>
+<div class="banner">Encontre o melhor preço 💊</div>
 
 <div class="container">
-
   <div class="search-box">
     <input type="text" id="search" placeholder="Digite o nome do remédio...">
     <button id="btnBuscar">🔍</button>
   </div>
-
   <div id="resultados"></div>
-
 </div>
 
-<div class="painel" id="painelAdmin" style="display:none;">
-  <strong>📊 Painel Admin</strong><br>
-  <div id="cliques"></div>
-  <button class="btn-reset" onclick="zerarCliques()">Zerar cliques</button>
-</div>
-
-  <script>
-
-    const firebaseConfig = {
+<script>
+// CONFIGURAÇÃO SINCRONIZADA COM O ADMIN
+const firebaseConfig = {
   apiKey: "AIzaSyDK31lrk1SaWE-muumhYJIJ2mBRvq_T8EA",
   authDomain: "buscafarma-a4c3c.firebaseapp.com",
   projectId: "buscafarma-a4c3c",
-  storageBucket: "buscafarma-a4c3c.appspot.com",
+  storageBucket: "buscafarma-a4c3c.firebasestorage.app",
   messagingSenderId: "457560066459",
-  appId: "1:457560066459:web:4389b9fe057c7362a5f939"
+  appId: "1:457560066459:web:4389b9fe057c7362a5f93e"
 };
 
-// Inicializa o Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.firestore();
+let produtos = []; // Declarado no topo para evitar erros
 
-    
-// SERVICE WORKER (CORRIGIDO PARA NETLIFY)
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("Service Worker registrado"))
-    .catch(err => console.log("Erro SW:", err));
-}
-
-// CLIQUES
-function registrarClique(farmacia){
-  const ref = db.collection("cliques").doc(farmacia);
-
-  ref.get().then(doc => {
-    if(doc.exists){
-      ref.update({ total: doc.data().total + 1 });
-    } else {
-      ref.set({ total: 1 });
-    }
-  });
-}
-
-// PAINEL
-function atualizarPainel(){
-  const div = document.getElementById("cliques");
-  div.innerHTML = "Carregando...";
-
-  db.collection("cliques").get().then(snapshot => {
-    div.innerHTML = "";
-    snapshot.forEach(doc => {
-      div.innerHTML += `${doc.id}: ${doc.data().total} cliques<br>`;
-    });
-  });
-}
-
-// ZERAR
-function zerarCliques(){
-  db.collection("cliques").get().then(snapshot => {
-    snapshot.forEach(doc => doc.ref.delete());
-    atualizarPainel();
-  });
-}
-
-// BUSCA
-function buscar(){
+// FUNÇÃO DE BUSCA
+function buscar() {
   const termo = document.getElementById("search").value.toLowerCase();
   const resultados = document.getElementById("resultados");
-
+  
   let filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
-
+  
   const patrocinados = filtrados.filter(p => p.patrocinado);
-  const normais = filtrados.filter(p => !p.patrocinado)
-    .sort((a,b) => a.preco - b.preco);
-
+  const normais = filtrados.filter(p => !p.patrocinado).sort((a,b) => a.preco - b.preco);
   filtrados = [...patrocinados, ...normais];
 
   resultados.innerHTML = "";
-
-  if(filtrados.length === 0){
-  resultados.innerHTML = `
-    <p style="text-align:center;color:gray;margin-top:20px;">
-      😕 Nenhum resultado encontrado
-    </p>
-  `;
-  return;
+  if(filtrados.length === 0) {
+    resultados.innerHTML = '<p style="text-align:center;color:gray;margin-top:20px;">😕 Nenhum resultado</p>';
+    return;
   }
 
   filtrados.forEach((p, index) => {
     const isMelhorPreco = !p.patrocinado && index === patrocinados.length;
-
     const card = document.createElement("div");
     card.className = "card";
-
     card.innerHTML = `
       <img src="${p.img || 'https://via.placeholder.com/150'}" alt="${p.nome}">
       <div class="info">
         <strong>${p.nome}</strong><br>
         ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
         ${isMelhorPreco ? '<div class="badge">🔥 Melhor preço</div>' : ''}
-        <div class="price">R$ ${p.preco.toFixed(2)}</div>
+        <div class="price">R$ ${Number(p.preco).toFixed(2)}</div>
         <small>${p.farmacia}</small>
       </div>
-      <a class="btn" target="_blank"
-        onclick="registrarClique('${p.farmacia}')"
-        href="https://wa.me/?text=Olá, quero ${p.nome}">
-        Comprar
-      </a>
+      <a class="btn" target="_blank" href="https://wa.me/?text=Olá, quero ${p.nome}">Comprar</a>
     `;
-
     resultados.appendChild(card);
   });
 }
 
-// ADMIN
-if (window.location.search.includes("admin")) {
-  document.getElementById("painelAdmin").style.display = "block";
-  atualizarPainel();
-}
-
-// EVENTOS
-document.getElementById("search").addEventListener("input", buscar);
-document.getElementById("btnBuscar").addEventListener("click", buscar);
-
-buscar();
-
-    let produtos = []; // Começa vazio
-
-// Esta função monitora o Firebase em tempo real
-function carregarProdutosDoBanco() {
+// CARREGAMENTO DO BANCO
+function carregarProdutos() {
   db.collection("produtos").onSnapshot((snapshot) => {
-    produtos = []; // Limpa para atualizar
-    snapshot.forEach((doc) => {
-      produtos.push(doc.data());  
-    });
-   alert("Recebi " + produtos.length + " produtos do banco!");
-    
-    // Chama a função buscar() que você já tem para desenhar os cards na tela
-    buscar(); 
-    console.log("Produtos carregados do Firebase!");
+    produtos = [];
+    snapshot.forEach((doc) => { produtos.push(doc.data()); });
+    buscar(); // Atualiza a tela assim que recebe os dados
   });
 }
 
-// Inicia o carregamento assim que a página abre
-carregarProdutosDoBanco();
-    
+document.getElementById("search").addEventListener("input", buscar);
+document.getElementById("btnBuscar").addEventListener("click", buscar);
 
- </script>
-
+carregarProdutos();
+</script>
 </body>
-  </html>
+</html>
