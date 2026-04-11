@@ -194,13 +194,6 @@ header {
   <button class="btn-reset" onclick="zerarCliques()">Zerar cliques</button>
 </div>
 
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-
-
   <script>
 
     const firebaseConfig = {
@@ -331,7 +324,7 @@ function carregarProdutosDoBanco() {
     snapshot.forEach((doc) => {
       produtos.push(doc.data());  
     });
-    alert("Recebi " + produtos.length + " produtos do banco!");
+    
     // Chama a função buscar() que você já tem para desenhar os cards na tela
     buscar(); 
     console.log("Produtos carregados do Firebase!");
