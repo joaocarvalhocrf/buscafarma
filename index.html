@@ -218,12 +218,20 @@ if ("serviceWorker" in navigator) {
 // INSTALAR APP INTELIGENTE
 let deferredPrompt;
 const btnInstall = document.getElementById("btnInstall");
+    const isAdmin = window.location.search.includes("admin");
+
+if (isAdmin) {
+  btnInstall.style.display = "none";
+}
 
 // captura evento real
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  btnInstall.style.display = "block";
+
+  if (!isAdmin) {
+    btnInstall.style.display = "block";
+  }
 });
 
 // clique no botão
