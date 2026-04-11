@@ -91,36 +91,44 @@ function buscar() {
     const termo = document.getElementById("search").value.toLowerCase();
     const resultados = document.getElementById("resultados");
     
+    // Filtro duplo: Busca + Categoria
     let filtrados = produtos.filter(p => {
         const matchesBusca = p.nome.toLowerCase().includes(termo);
         const matchesCategoria = categoriaAtual === 'Todos' || p.categoria === categoriaAtual;
         return matchesBusca && matchesCategoria;
     });
 
+    // Separa patrocinados e ordena por preço os normais
     const patrocinados = filtrados.filter(p => p.patrocinado);
     const normais = filtrados.filter(p => !p.patrocinado).sort((a,b) => a.preco - b.preco);
     filtrados = [...patrocinados, ...normais];
 
-    resultados.innerHTML = filtrados.length === 0 ? '<p style="text-align:center;color:gray;">Nenhum produto encontrado.</p>' : "";
+    resultados.innerHTML = "";
+
+    if (filtrados.length === 0) {
+        resultados.innerHTML = '<p style="text-align:center;color:gray;margin-top:20px;">😕 Nenhum produto encontrado.</p>';
+        return;
+    }
 
     filtrados.forEach((p, index) => {
+        // Define se é o melhor preço (primeiro da lista após os patrocinados)
         const isMelhorPreco = !p.patrocinado && index === patrocinados.length;
+        
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-            <img src="${p.img || 'https://via.placeholder.com/150'}">
+            <img src="${p.img || 'https://via.placeholder.com/150'}" alt="${p.nome}">
             <div class="info">
-                <strong>${p.nome}</strong><br>
+                <strong style="font-size: 16px;">${p.nome}</strong><br>
                 
-                ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
-                ${isMelhorPreco ? '<div class="badge">🔥 Melhor Preço</div>' : ''}
-                
-                <div style="margin-top: 5px;">
-                    <small style="color: #7f8c8d;">📂 ${p.categoria}</small>
+                <div style="margin: 5px 0;">
+                    ${p.patrocinado ? '<div class="patrocinado">⭐ Patrocinado</div>' : ''}
+                    ${isMelhorPreco ? '<div class="badge">🔥 Melhor Preço</div>' : ''}
                 </div>
-                
+
+                <small style="color: #666;">📂 ${p.categoria || 'Geral'}</small><br>
                 <div class="price">R$ ${Number(p.preco).toFixed(2)}</div>
-                <small>${p.farmacia}</small>
+                <small style="color: #999;">${p.farmacia}</small>
             </div>
             <a class="btn-comprar" target="_blank" 
                onclick="registrarClique('${p.farmacia}')" 
@@ -130,6 +138,7 @@ function buscar() {
         `;
         resultados.appendChild(card);
     });
+}
 
 db.collection("produtos").onSnapshot((snapshot) => {
     produtos = [];
