@@ -127,8 +127,17 @@ function buscar() {
                 </div>
 
                 <small style="color: #666;">📂 ${p.categoria || 'Geral'}</small><br>
+                
                 <div class="price">R$ ${Number(p.preco).toFixed(2)}</div>
-                <small style="color: #999;">${p.farmacia}</small>
+                
+                <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+                    <small style="color: #999;">${p.farmacia}</small>
+                    ${p.localizacao ? `
+                        <a href="${p.localizacao}" target="_blank" style="text-decoration: none; font-size: 11px; display: flex; align-items: center; color: #3498db;">
+                            📍<span style="border-bottom: 1px solid #3498db;">Mapa</span>
+                        </a>
+                    ` : ''}
+                </div>
             </div>
             <a class="btn-comprar" target="_blank" 
                onclick="registrarClique('${p.farmacia}')" 
