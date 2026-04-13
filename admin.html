@@ -31,6 +31,8 @@
     <input type="text" id="farmacia" placeholder="Nome da Farmácia">
     <input type="text" id="imgUrl" placeholder="Link da Imagem (URL)">
     
+    <input type="text" id="localizacao" placeholder="Link do Google Maps da Farmácia">
+    
     <label>Selecione a Categoria:</label>
     <select id="categoria">
         <option value="Medicamentos">Medicamentos</option>
@@ -46,7 +48,6 @@
 </div>
 
 <div class="box">
-    <input type="text" id="localizacao" placeholder="Link do Google Maps da Farmácia">
     <h2>📦 Produtos Online</h2>
     <div id="lista-produtos">Carregando...</div>
 </div>
@@ -63,39 +64,33 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-    // Adicione isso logo abaixo da linha 'const db = firebase.firestore();'
 const senha = prompt("Digite a senha de acesso:");
 if (senha !== "221309") {
     alert("Acesso negado!");
-    window.location.href = "index.html"; // Manda o curioso de volta para o site
+    window.location.href = "index.html";
 }
 
-    
-// FUNÇÃO PARA SALVAR OU ATUALIZAR
 function salvar() {
     const id = document.getElementById('produtoId').value;
-
     const doc = {
-    nome: document.getElementById('nome').value,
-    preco: parseFloat(document.getElementById('preco').value),
-    categoria: document.getElementById('categoria').value,
-    farmacia: document.getElementById('farmacia').value,
-    img: document.getElementById('imgUrl').value || "https://via.placeholder.com/150",
-    patrocinado: document.getElementById('patrocinado').checked,
-    localizacao: document.getElementById('localizacao').value, // Nova linha aqui
-    dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
-};
+        nome: document.getElementById('nome').value,
+        preco: parseFloat(document.getElementById('preco').value),
+        categoria: document.getElementById('categoria').value,
+        farmacia: document.getElementById('farmacia').value,
+        img: document.getElementById('imgUrl').value || "https://via.placeholder.com/150",
+        patrocinado: document.getElementById('patrocinado').checked,
+        localizacao: document.getElementById('localizacao').value,
+        dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
+    };
 
     if(!doc.nome || isNaN(doc.preco)) return alert("Preencha Nome e Preço!");
 
     if (id) {
-        // MODO EDIÇÃO
         db.collection("produtos").doc(id).update(doc).then(() => {
             alert("Atualizado com sucesso!");
             limparFormulario();
         });
     } else {
-        // MODO CADASTRO
         db.collection("produtos").add(doc).then(() => {
             alert("Cadastrado com sucesso!");
             limparFormulario();
@@ -103,8 +98,8 @@ function salvar() {
     }
 }
 
-// FUNÇÃO PARA PREPARAR A EDIÇÃO (Puxa os dados para o form)
-function prepararEdicao(id, nome, preco, categoria, farmacia, img, patrocinado) {
+// FUNÇÃO EDITAR ATUALIZADA (Agora recebe a localização)
+function prepararEdicao(id, nome, preco, categoria, farmacia, img, patrocinado, localizacao) {
     document.getElementById('produtoId').value = id;
     document.getElementById('nome').value = nome;
     document.getElementById('preco').value = preco;
@@ -112,21 +107,21 @@ function prepararEdicao(id, nome, preco, categoria, farmacia, img, patrocinado) 
     document.getElementById('farmacia').value = farmacia;
     document.getElementById('imgUrl').value = img;
     document.getElementById('patrocinado').checked = patrocinado;
+    document.getElementById('localizacao').value = localizacao || ""; 
 
-    // Ajusta a interface
     document.getElementById('titulo-form').innerText = "📝 Editando Produto";
     document.getElementById('btn-salvar').innerText = "Confirmar Alteração";
     document.getElementById('btn-cancelar').style.display = "block";
     window.scrollTo(0, 0);
 }
 
-// FUNÇÃO PARA LIMPAR FORMULÁRIO
 function limparFormulario() {
     document.getElementById('produtoId').value = "";
     document.getElementById('nome').value = "";
     document.getElementById('preco').value = "";
     document.getElementById('farmacia').value = "";
     document.getElementById('imgUrl').value = "";
+    document.getElementById('localizacao').value = "";
     document.getElementById('patrocinado').checked = false;
 
     document.getElementById('titulo-form').innerText = "🚀 Cadastrar Produto";
@@ -134,22 +129,23 @@ function limparFormulario() {
     document.getElementById('btn-cancelar').style.display = "none";
 }
 
-// LISTAGEM EM TEMPO REAL COM BOTÃO EDITAR
+// LISTAGEM ATUALIZADA (Mostra farmácia e localização)
 db.collection("produtos").orderBy("dataCriacao", "desc").onSnapshot((snapshot) => {
     const container = document.getElementById("lista-produtos");
     container.innerHTML = "";
     snapshot.forEach((doc) => {
         const p = doc.data();
-        // Criamos o HTML com os dados protegidos por aspas para não dar erro no clique
         container.innerHTML += `
             <div class="item-lista">
-                <img src="${p.img}">
+                <img src="${p.img || 'https://via.placeholder.com/150'}">
                 <div style="flex: 1; margin-left: 10px;">
                     <strong>${p.nome}</strong><br>
-                    <small>${p.categoria} | R$ ${Number(p.preco).toFixed(2)}</small>
+                    <small>📂 ${p.categoria} | R$ ${Number(p.preco).toFixed(2)}</small><br>
+                    <small>🏥 ${p.farmacia}</small>
+                    ${p.localizacao ? `<small style="color: #3498db;"> | 📍 Mapa OK</small>` : ''}
                 </div>
                 <div class="botoes-acao">
-                    <button class="btn-edit" onclick="prepararEdicao('${doc.id}', '${p.nome}', ${p.preco}, '${p.categoria}', '${p.farmacia}', '${p.img}', ${p.patrocinado})">Editar</button>
+                    <button class="btn-edit" onclick="prepararEdicao('${doc.id}', '${p.nome}', ${p.preco}, '${p.categoria}', '${p.farmacia}', '${p.img}', ${p.patrocinado}, '${p.localizacao || ''}')">Editar</button>
                     <button class="btn-delete" onclick="deletar('${doc.id}')">Excluir</button>
                 </div>
             </div>
